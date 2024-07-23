@@ -12,7 +12,7 @@ def output():
         print(massive[i])
 
 # Specify the path to your text file
-file_path = 'input.txt'
+file_path = 'test.txt'
 
 # Read the text file and create the matrix
 matrix = read_text_file_to_2d_list(file_path)
@@ -24,6 +24,8 @@ for row in matrix:
         max_x=int(row[1])
     if (int(row[2])>max_y):
         max_y=int(row[2])
+max_x+=1
+max_y+=1
 print(max_y)
 print(max_x)
 for i in range(max_y):
@@ -33,8 +35,7 @@ for i in range(max_y):
     massive.append(new_massive)
 
 for i in matrix:
-    x = int(i[1])-1
-    y = int(i[2])-1
+    x = int(i[1])
+    y = max_y - int(i[2])-1
     massive[y][x] = i[0]
 output()
-print(massive[16][33])
