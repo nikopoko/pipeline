@@ -1,5 +1,6 @@
 class pair:
-    x,y= None
+    x= None
+    y= None
 def read_text_file_to_2d_list(file_path):
     matrix = []
     with open(file_path, 'r', encoding='utf-8') as file:
@@ -35,13 +36,17 @@ def treatment(inp): # [0] means up, [1] means down, [2] means right, [3] means l
         return[0,1,1,1]
     if inp == '╩':
         return[1,0,1,1]
+    return inp
 def origin(inp,x,y):
+    
     if inp == '*':
         source = pair()
         source.x=x
         source.y=y
-    if inp is not '0':
+        return 0
+    if (inp!='0'):
         sinks.append([inp,y,x])
+
 
 # Read the text file and create the matrix
 matrix = read_text_file_to_2d_list(file_path)
@@ -69,27 +74,44 @@ for i in range(max_y):
 
 for i in matrix:
     x = int(i[1])
-    y = max_y - int(i[2])-1  
-    massive[y][x] = treatment(i[0])
-    origin(i[0],i[1],i[2])
+    y = max_y - int(i[2])-1 
+    item = treatment(i[0])
+    if item == i[0]:
+        origin(i[0],i[1],i[2])
+    massive[y][x] = item
 output()
 def reqursion(x,y):
-    pipe = matrix[y][x]
-    if (pipe.type is str or chr and pipe=='*') :
-        return True
-    up = pipe[0]
-    down = pipe[1]
-    right = pipe[2]
-    left = pipe[3]
+    pipe = massive[y][x]
+    if (pipe is (str or chr) and pipe=='*') :
+        return 1
     ans = 0
-    if up and (matrix[y+1][x]!=0 and matrix[y+1][x][1]!=0):
-        ans += reqursion(y+1,x)
-    if down and (matrix[y-1][x]!=0 and matrix[y-1][x][2]!=0):
-        ans +=reqursion(y-1,x)
-    if right and (matrix[y][x+1]!=0 and matrix[y][x+1][3]!=0):
-        ans +=reqursion(y,x+1)
-    if left and (matrix[y][x-1]!=0 and matrix[y][x-1][4]!=0):
-        ans +=reqursion(y,x-1)
-    if ans > 0:
-        return True
+    if pipe in sinks:
+        if (matrix[y+1][x].type() is list and matrix[y+1][x][1]!=0) or matrix[y+1][x]=='*':
+            ans += reqursion(y+1,x)
+        if (matrix[y-1][x].type() is list and matrix[y-1][x][2]!=0) or matrix[y-1][x]=='*':
+            ans +=reqursion(y-1,x)
+        if (matrix[y][x+1].type() is list and matrix[y][x+1][3]!=0) or matrix[y][x+1]=='*':
+            ans +=reqursion(y,x+1)
+        if (matrix[y][x-1].type() is list and matrix[y][x-1][4]!=0) or matrix[y][x-1]=='*':
+            ans +=reqursion(y,x-1)
+        return ans
+    else:
+        up = pipe[0]
+        down = pipe[1]
+        right = pipe[2]
+        left = pipe[3]
     
+    if up and (matrix[y+1][x].type() is list and matrix[y+1][x][1]!=0):
+        ans += reqursion(y+1,x)
+    if down and (matrix[y-1][x].type() is list and matrix[y-1][x][2]!=0):
+        ans +=reqursion(y-1,x)
+    if right and (matrix[y][x+1].type() is list and matrix[y][x+1][3]!=0):
+        ans +=reqursion(y,x+1)
+    if left and (matrix[y][x-1].type() is list and matrix[y][x-1][4]!=0):
+        ans +=reqursion(y,x-1)
+    return ans
+
+for i in sinks:
+    print('y = '+i[1]+',','x = '+i[2]+',',i[0])
+for i in sinks:
+    print(reqursion(int(i[2]),int(i[1])))
