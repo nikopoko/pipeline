@@ -1,7 +1,6 @@
 # Define the function to read the file and process the input
 def read_input_file(file_path):
     items = []
-    
     with open(file_path, 'r', encoding='utf-8') as file:
         for line in file:
             # Split the line into parts
@@ -97,40 +96,95 @@ def create_letter_array(items, max_y):
     return star,letter_array
 def start(y,x):
     ans = 0
-    if final_array[y+1][x][1]==1:
-        ans += requrs(y+1,x)
-    if final_array[y-1][x][0]==1:
-        ans += requrs(y-1,x)
+    if final_array[y-1][x][1]==1:
+        result = requrs(y-1,x,"down")
+        if result == 0:
+            final_array[y-1][x][1]=0
+        else:
+            final_array[y-1][x]=[1,1,1,1]
+            final_array[y][x]=[1,1,1,1]
+            return 1
+    if final_array[y+1][x][0]==1:
+        
+        result = requrs(y+1,x,"up")
+        if result==0:
+            final_array[y+1][x][0]=0
+        else:
+            final_array[y+1][x]=[1,1,1,1]
+            final_array[y][x]=[1,1,1,1]
+            return 1
     if final_array[y][x+1][3]==1:
-        ans += requrs(y,x+1)
+        result = requrs(y,x+1,"left")
+        if result==0:
+            final_array[y][x+1][3]=0
+        else:
+            final_array[y][x+1]=[1,1,1,1]
+            final_array[y][x]=[1,1,1,1]
+            return 1
     if final_array[y][x-1][2]==1:
-        ans += requrs(y,x-1)
-    return ans
-def requrs(y,x):
+        result = requrs(y,x-1,"right")
+        print("turn left")
+        if result==0:
+            final_array[y][x-1][2]=0
+        else:
+            final_array[y][x-1]=[1,1,1,1]
+            final_array[y][x]=[1,1,1,1]
+            return 1
+    return 0
+def requrs(y,x,direction):
     if final_array[y][x]==0:
         return 0
     if final_array[y][x]==[1,1,1,1]:
         return 1
-    ans = 0
     up=final_array[y][x][0]
     down=final_array[y][x][1]
     right=final_array[y][x][2]
     left=final_array[y][x][3]
-    next_up = final_array[y+1][x][1]==1
-    next_down = final_array[y-1][x][0]==1
-    next_right = final_array[y][x][3]==1
-    next_left = final_array[y][x][2]==1
-    if up and next_up:
-        ans += requrs(y+1,x)
-    if down and next_down:
-        ans += requrs(y-1,x)
-    if right and next_right:
-        ans += requrs(y,x+1)
-    if left and next_left:
-        ans += requrs(y,x-1)
-    if ans > 0:
-        final_array[y][x]=[1,1,1,1]
-    return ans
+    next_up = final_array[y-1][x][1]
+    next_down = final_array[y+1][x][0]
+    next_right = final_array[y][x+1][3]
+    next_left = final_array[y][x-1][2]
+    if up and next_up and direction!="up":
+        result = requrs(y-1,x,"down")
+        print("turn up" ,result)
+        if result==0:
+            final_array[y-1][x]=0
+            final_array[y][x][0]=0
+        else:
+            final_array[y-1][x]=[1,1,1,1]
+            final_array[y][x]=[1,1,1,1]
+            return 1
+    if down and next_down and direction!="down":
+        result = requrs(y+1,x,"up")
+        print("turn down")
+        if result==0:
+            final_array[y+1][x]=0
+            final_array[y][x][1]=0
+        else:
+            final_array[y+1][x]=[1,1,1,1]
+            final_array[y][x]=[1,1,1,1]
+            return 1
+    if right and next_right and direction!="right":
+        result=requrs(y,x+1,"left")
+        print("turn right")
+        if result==0:
+            final_array[y][x+1]=0
+            final_array[y][x][2]=0
+        else:
+            final_array[y][x+1]=[1,1,1,1]
+            final_array[y][x]=[1,1,1,1]
+            return 1
+    if left and next_left and direction!="left":
+        result=requrs(y,x-1,"right")
+        print("turn left")
+        if result==0:
+            final_array[y][x-1]=0
+            final_array[y][x][3]=0
+        else:
+            final_array[y][x-1]=[1,1,1,1]
+            final_array[y][x]=[1,1,1,1]
+            return 1
+    return 0
 
 
 # Define the file path
@@ -157,6 +211,8 @@ for row in final_array:
     print(row)
 # Print the array with name, coordinates, and letter
 print("\nArray with Names, Coordinates, and Letters:")
-print(start(3,2))
+
+
 for item in letter_array:
     print(item)
+    print(start(item['y'],item['x']))
